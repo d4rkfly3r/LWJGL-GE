@@ -1,7 +1,7 @@
 package net.d4rkfly3r.engines.GameEngine;
 
 import net.d4rkfly3r.engines.GameEngine.graphics.TextureManager;
-import net.d4rkfly3r.engines.GameEngine.world.GrassTile;
+import net.d4rkfly3r.engines.GameEngine.world.Scene;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -21,12 +21,12 @@ public class MainClass implements Runnable {
     private final InputManager inputManager;
     private long windowHandle;
     private int windowWidth, windowHeight;
-    private GrassTile grassTile;
+    private Scene scene;
 
     public MainClass() {
         TextureManager.i().scanAndStitchTextures();
         this.inputManager = new InputManager();
-        grassTile = new GrassTile(100, 100);
+        scene = new Scene();
     }
 
     public static void main(String[] args) {
@@ -118,7 +118,7 @@ public class MainClass implements Runnable {
             glBindTexture(GL_TEXTURE_2D, 0);
             glPushMatrix();
 
-            grassTile.render();
+            scene.render();
 
             glPopMatrix();
 

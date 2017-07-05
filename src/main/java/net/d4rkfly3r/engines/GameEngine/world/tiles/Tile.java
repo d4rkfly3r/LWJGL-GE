@@ -1,21 +1,20 @@
-package net.d4rkfly3r.engines.GameEngine.world;
+package net.d4rkfly3r.engines.GameEngine.world.tiles;
 
+import net.d4rkfly3r.engines.GameEngine.graphics.Texture;
 import net.d4rkfly3r.engines.GameEngine.graphics.TextureManager;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class GrassTile extends Tile {
-    private final int x;
-    private final int y;
+public abstract class Tile {
 
-    public GrassTile(int x, int y) {
-        super(TextureManager.i().getTexture("ground/grass"));
-        this.x = x;
-        this.y = y;
+    protected Texture texture;
+    protected boolean obstructive = false;
+
+    protected Tile(final Texture texture) {
+        this.texture = texture;
     }
 
-    @Override
-    public void render() {
+    public void render(int x, int y) {
         glBindTexture(GL_TEXTURE_2D, TextureManager.i().getStitchedTextureID());
         glColor4f(1f, 1f, 1f, 1f);
         glBegin(GL_QUADS);
@@ -28,6 +27,5 @@ public class GrassTile extends Tile {
         glTexCoord2d(texture.u2, texture.v);
         glVertex2f(x + 64, y);
         glEnd();
-
     }
 }

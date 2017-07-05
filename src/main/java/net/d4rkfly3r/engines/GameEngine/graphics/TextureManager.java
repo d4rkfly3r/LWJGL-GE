@@ -4,6 +4,7 @@ import org.lwjgl.BufferUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,6 +82,7 @@ public class TextureManager {
     private void stitchTextures() {
         final int indexSize = (int) Math.pow(2, Math.ceil(Math.log(Math.sqrt(textureLinks.size())) / Math.log(2)));
         final int size = indexSize * 64;
+        System.out.println(indexSize + " | " + size);
         stitchedTexture = new BufferedImage(size, size, BufferedImage.TYPE_4BYTE_ABGR);
 
         int row = 0, column = 0, stitchX, stitchY;
@@ -102,10 +104,16 @@ public class TextureManager {
                 }
             }
 
+//            try {
+//                ImageIO.write(stitchedTexture, "PNG", new File("debug/stitched.png"));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
             textures.put(next.getKey(), new Texture(textureLink.u, textureLink.v, textureLink.u2, textureLink.v2));
             next.getValue().bufferedImage = null;
             column++;
-            if (column > indexSize) {
+            if (column >= indexSize) {
                 row++;
                 column = 0;
             }
@@ -120,7 +128,11 @@ public class TextureManager {
                 // Image found... TODO: Verify is a supported image.
                 try {
                     final String key = start + file.getName().substring(0, file.getName().lastIndexOf('.'));
-                    final TextureLink textureLink = new TextureLink(ImageIO.read(file));
+                    final BufferedImage read = ImageIO.read(file);
+                    if (read.getWidth() != 64 || read.getHeight() != 64) {
+                        continue;
+                    }
+                    final TextureLink textureLink = new TextureLink(read);
                     System.out.println(key + " | " + textureLink);
                     textureLinks.put(key, textureLink);
                 } catch (Exception e) {
