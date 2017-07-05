@@ -1,8 +1,7 @@
 package net.d4rkfly3r.engines.GameEngine;
 
-import net.d4rkfly3r.engines.GameEngine.graphics.Texture;
 import net.d4rkfly3r.engines.GameEngine.graphics.TextureManager;
-import net.d4rkfly3r.engines.GameEngine.graphics.TextureMeta;
+import net.d4rkfly3r.engines.GameEngine.world.GrassTile;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -19,18 +18,15 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class MainClass implements Runnable {
 
-    @TextureMeta("ground/grass")
-    private static Texture grassTexture;
-    @TextureMeta("ground/sand")
-    private static Texture sandTexture;
     private final InputManager inputManager;
-    private final TextureManager textureManager;
     private long windowHandle;
     private int windowWidth, windowHeight;
+    private GrassTile grassTile;
 
     public MainClass() {
+        TextureManager.i().scanAndStitchTextures();
         this.inputManager = new InputManager();
-        this.textureManager = new TextureManager();
+        grassTile = new GrassTile(100, 100);
     }
 
     public static void main(String[] args) {
@@ -109,16 +105,12 @@ public class MainClass implements Runnable {
 //        glEnable(GL_BLEND);
 //        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        textureManager.scanAndInjectTextures();
-
+        TextureManager.i().genGLTexture();
 //        framebuffer = new Framebuffer(width, height);
 
     }
 
     private void loop() {
-
-        System.out.println("Grass: " + grassTexture);
-        System.out.println("Sand: " + sandTexture);
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -126,45 +118,7 @@ public class MainClass implements Runnable {
             glBindTexture(GL_TEXTURE_2D, 0);
             glPushMatrix();
 
-            glColor4f(1f, 0, 0, 1f);
-            glBegin(GL_QUADS);
-            glVertex2d(0, 0);
-            glVertex2d(0, 100);
-            glVertex2d(100, 100);
-            glVertex2d(100, 0);
-            glEnd();
-
-            glBindTexture(GL_TEXTURE_2D, textureManager.getStitchedTextureID());
-            float x = 100f;
-            float y = 100f;
-            float height = 192;
-            float width = 192;
-            glColor4f(1f, 1f, 1f, 1f);
-            glBegin(GL_QUADS);
-            glTexCoord2d(grassTexture.u, grassTexture.v);
-            glVertex2f(x, y);
-            glTexCoord2d(grassTexture.u, grassTexture.v2);
-            glVertex2f(x, y + height);
-            glTexCoord2d(grassTexture.u2, grassTexture.v2);
-            glVertex2f(x + width, y + height);
-            glTexCoord2d(grassTexture.u2, grassTexture.v);
-            glVertex2f(x + width, y);
-            glEnd();
-
-            x = 300;
-            y = 300;
-            glColor4f(1f, 1f, 1f, 1f);
-            glBegin(GL_QUADS);
-            glTexCoord2d(sandTexture.u, sandTexture.v);
-            glVertex2f(x, y);
-            glTexCoord2d(sandTexture.u, sandTexture.v2);
-            glVertex2f(x, y + height);
-            glTexCoord2d(sandTexture.u2, sandTexture.v2);
-            glVertex2f(x + width, y + height);
-            glTexCoord2d(sandTexture.u2, sandTexture.v);
-            glVertex2f(x + width, y);
-            glEnd();
-
+            grassTile.render();
 
             glPopMatrix();
 

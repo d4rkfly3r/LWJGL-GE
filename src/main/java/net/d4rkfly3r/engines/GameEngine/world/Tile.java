@@ -2,7 +2,7 @@ package net.d4rkfly3r.engines.GameEngine.world;
 
 import net.d4rkfly3r.engines.GameEngine.graphics.Texture;
 
-public class Tile {
+public abstract class Tile {
 
     Texture texture;
     boolean obstructive = false;
@@ -10,4 +10,6 @@ public class Tile {
     public Tile(final Texture texture) {
         this.texture = texture;
     }
+
+    public abstract void render();
 }
